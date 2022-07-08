@@ -3,7 +3,7 @@ CREATE DATABASE PizzaHut;
 GO
 
 USE PizzaHut;
-
+GO
 
 -- tables
 -- Table: CARGO
@@ -197,7 +197,6 @@ CREATE SEQUENCE VENTA_seq
     NO CYCLE
     NO CACHE;
 
--- End of file.
 
 
 ------ INSERCION DE DATOS -----------
@@ -217,11 +216,70 @@ CREATE SEQUENCE VENTA_seq
 ('Estrella',  '978456932', 'EstrellaA@gmail.com',1),
 ('Alberto', '941203256', 'Alberto@gmail.com',3),
 ('Jesus', '974120358', 'JesusC@gmail.com',4),
-('Carlos', '989520365', 'Carlos@gmail.com',4)SELECT * FROM EMPLEADO/* Insertar registros tabla PRODUCTO */INSERT INTO PRODUCTO(NOMPRO,CANPRO,PREPRO)VALUES('Pizza margarita',50,16.00),('Pizza cuatro quesos',70,15.00),('Pizza de pepperoni',50,28.00),('Pizza cuatro estaciones',100,12.00),('Pizza con champiñones',60,50.00),('Pizza hawaiana',45,70.00),('Pizza marinara',9,90.00),('Pizza napolitana',5,80.00),('Pizza neoyorquina',20,76.00),('Pizza fugazza',10,98.00)SELECT * FROM PRODUCTO/* Insertar registros tabla SUCURSAL */INSERT INTO SUCURSAL(IDEMP)VALUES(1),(1),(7),(1),(7),(1),(7),(7),(1),(1),(7),(1)SELECT * FROM SUCURSAL;/* Insertar registros tabla EQUIPO */INSERT INTO EQUIPO(IDEMP,IDSUC)VALUES(3,1),(8,1),(8,2),(5,1),(8,3),(3,4),(5,9),(3,9),(8,2),(5,3),(5,4),(1,7)SELECT * FROM EQUIPO;
+('Carlos', '989520365', 'Carlos@gmail.com',4)SELECT * FROM EMPLEADO/* Insertar registros tabla PRODUCTO */INSERT INTO PRODUCTO(NOMPRO,CANPRO,PREPRO)VALUES('Pizza margarita',50,16.00),('Pizza cuatro quesos',70,15.00),('Pizza de pepperoni',50,28.00),('Pizza cuatro estaciones',100,12.00),('Pizza con champiñones',60,50.00),('Pizza hawaiana',45,70.00),('Pizza marinara',9,90.00),('Pizza napolitana',5,80.00),('Pizza neoyorquina',20,76.00),('Pizza fugazza',10,98.00)SELECT * FROM PRODUCTO/* Insertar registros tabla SUCURSAL */INSERT INTO SUCURSAL(IDEMP)VALUES(1),(1),(7),(1),(7),(1),(7),(7),(1),(1),(7),(1)SELECT * FROM SUCURSAL;/* Insertar registros tabla EQUIPO */INSERT INTO EQUIPO(IDEMP,IDSUC)VALUES(3,1),(8,1),(8,2),(5,1),(8,3),(3,4),(5,9),(3,9),(8,2),(5,3),(5,4),(1,7)SELECT * FROM EQUIPO;GO
 
 -----------    TRANSACCIONALES  ----------------
 
 
+
+
+CREATE PROCEDURE spUpdateVenta
+      (
+	      --Venta variables
+		  @IDCLI int,
+		  @IDEMP int,
+		  @TIPVENT int,
+		  @FECVEN datetime,
+
+		  -- Producto variables
+		  @IDPRO int,
+
+		   -- Venta Detalle variables
+		   @CANBOLDET int
+      )
+AS
+   BEGIN 
+	      SET NOCOUNT ON
+		  BEGIN TRAN /* TRANSACCIONES */
+	      BEGIN TRY
+
+		       --Obteniendo la fecha de hoy
+			   DECLARE @FECBOLDET date;
+			   SELECT  @FECBOLDET=CAST( GETDATE() AS Date ) ;
+
+		  	   --calculando la nueva cantidad
+		       DECLARE @CANTACTUAL int,
+		       @NEWCANT int;
+			   SELECT @CANTACTUAL=CANPRO FROM PRODUCTO WHERE IDPRO=@IDPRO ;
+			   SET @NEWCANT= @CANTACTUAL-@CANBOLDET;
+
+			   --calculando el subtotal
+			   DECLARE @TOTBOL decimal(10,2),
+			   @PRECUNIT decimal(10,2);
+			   SELECT @PRECUNIT=PREPRO FROM PRODUCTO WHERE IDPRO=@IDPRO;
+			   SET @TOTBOL=(@PRECUNIT*@CANBOLDET)
+
+			   --obteniendo el nuevo id de Venta
+			   INSERT INTO VENTA VALUES(@FECVEN,@TIPVENT,@IDCLI,@IDEMP);
+
+
+			   --obteniedo el id de la venta
+			   DECLARE @IDVEN int;
+			   SELECT @IDVEN=MAX(IDVEN) FROM VENTA;
+
+
+			   --Insertando datos y actualizando el producto
+			   INSERT INTO VENTA_DETALLE VALUES(@FECBOLDET,@CANBOLDET,@TOTBOL,@IDPRO,@IDVEN)
+
+			   COMMIT TRAN
+           END TRY
+
+		   BEGIN CATCH
+		         SELECT 'Fallo la transaccion de venta' AS ERROR
+			    IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		   END CATCH
+	   END
+GO
 
 
 
