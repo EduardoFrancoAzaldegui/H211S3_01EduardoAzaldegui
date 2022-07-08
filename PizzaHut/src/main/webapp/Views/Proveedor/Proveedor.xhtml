@@ -1,0 +1,279 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        
+    </h:head>
+
+
+    <h:body>
+
+        <ui:composition template="./../../templates/plantilla.xhtml">
+            <ui:define name="content">
+                <f:event listener="#{proveedorC.listar()}" type="preRenderView" />
+
+
+                <h:form id="formEncabezado">
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:commandButton value="Nuevo" icon="pi pi-plus" 
+                                             update=":formNuevoProveedor" oncomplete="PF('dialogNuevoProveedor').show()"
+                                             styleClass="ui-button-success" style="margin-right: .5rem"
+                                             actionListener="#{proveedorC.limpiar()}">
+                                <p:resetInput target=":formNuevoProveedor"/>
+                            </p:commandButton>
+                        </p:toolbarGroup>
+                        
+                        <p:toolbarGroup align="center">
+                            <div class="products-table-header">
+                                <span style="font-weight: bold">PROVEEDORES</span>
+                            </div>
+                        </p:toolbarGroup>
+
+                        <p:toolbarGroup align="right">
+                            <p:commandButton value=" XLS " icon="pi pi-download" styleClass="ui-button-help" ajax="false"
+                                             style="float:right; background-color: yellowgreen; margin-right:10px">
+                                <p:dataExporter type="xls" target=":formMostrarProveedor:tablaProveedor" fileName="Proveedor"/>
+                            </p:commandButton>
+                            <p:commandButton value="Reporte" styleClass="" ajax="false"
+                                             style="float:right; background-color: #90CAF9" actionListener="#{proveedorC.reporteProveedor()}"
+                                             onclick="this.form.target = '_blank'" title="Relacion de Proveedores "
+                                             icon="pi pi-download"/>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+                </h:form>
+
+
+
+                <h:form id="formMostrarProveedor">
+                    <p:dataTable id="tablaProveedor" widgetVar="dtProveedor" var="proveedor" value="#{proveedorC.listaProveedor}"
+                                 reflow="true" styleClass="products-table" rowKey="#{proveedor.IDPROV}"
+                                 paginator="true" rows="10" selectionMode="single"
+                                 paginatorPosition="bottom" selection="#{proveedorC.proveedor}"
+                                 emptyMessage="No hay datos de cliente">
+
+                        <f:facet name="header">
+                            <div class="provedor-table-header2">
+                                <p:selectOneMenu value="#{proveedorC.cass}" styleClass="estado">
+                                    <f:selectItem noSelectionOption="true" itemLabel="Todos" itemValue="3"/>
+                                    <f:selectItem noSelectionOption="true" itemLabel="Activos" itemValue="1"/>
+                                    <f:selectItem noSelectionOption="true" itemLabel="Inactivos" itemValue="2">
+                                    </f:selectItem>
+                                    <p:ajax listener="#{proveedorC.listar()}" update="formMostrarProveedor"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </f:facet>
+
+                        
+                        <p:column headerText="Codigo" sortBy="#{proveedor.IDPROV}" >
+                            <h:outputText value="#{proveedor.IDPROV}"/>
+                        </p:column>
+                        <p:column headerText="Nombre" filterBy="#{proveedor.RASOPROV}">
+                            <h:outputText value="#{proveedor.RASOPROV}"/>
+                        </p:column>
+                        <p:column headerText="Celular" filterBy="#{proveedor.CELPROV}">
+                            <h:outputText value="#{proveedor.CELPROV}"/>
+                        </p:column>
+                        <p:column headerText="RUC" filterBy="#{proveedor.RUCPROV}">
+                            <h:outputText value="#{proveedor.RUCPROV}"/>
+                        </p:column>
+                        <p:column headerText="Correo" sortBy="#{proveedor.CORPROV}">
+                            <h:outputText value="#{proveedor.CORPROV}"/>
+                        </p:column>
+
+                        
+                        <p:column exportable="false">
+                            <p:commandButton icon="pi pi-pencil" update=":formEditarProveedor"
+                                             oncomplete="PF('dialogModificarProveedor').show()"
+                                             styleClass="edit-button rounded-button ui-button-success">
+                                <f:setPropertyActionListener value="#{proveedor}" target="#{proveedorC.proveedor}"/>
+                                <p:resetInput target=":formEditarProveedor"/>
+                            </p:commandButton>
+
+                            <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" 
+                                             oncomplete="PF('deleteProvDialog').show()"
+                                             update=":formMostrarProveedor:tablaProveedor">
+                                <f:setPropertyActionListener value="#{proveedor}" target="#{proveedorC.proveedor}"/>
+                            </p:commandButton>    
+                        </p:column>
+                        
+                    </p:dataTable>
+                    
+                    
+                    <p:contextMenu for="tablaProveedor" id="contextPrueba">
+                        <p:menuitem value="Editar" oncomplete="PF('dialogModificarProveedor').show()"
+                                    icon="pi pi-save" update=":formEditarProveedor"
+                                    rendered="#{!proveedorC.estadoInactivo}">
+                            <p:resetInput target=":formEditarProveedor"/>
+                        </p:menuitem>
+
+                        <p:menuitem value="Eliminar" icon="pi pi-refresh" 
+                                    oncomplete="PF('deleteProductDialog').show()"
+                                    update=":formMostrarProveedor:tablaProveedor"
+                                    rendered="#{!proveedorC.estadoInactivo}">
+                        </p:menuitem>
+
+                        <p:menuitem value="Restaurar" icon="=pi pi-search" actionListener="#{proveedorC.restaurarProvedor()}"
+                                    update=":formMostrarProveedor:tablaProveedor" rendered="#{proveedorC.estadoInactivo}">
+                            <p:confirm header="Confirmación" message="¿Deseas restaurar?" icon="pi pi-search"/>
+                        </p:menuitem>
+                    </p:contextMenu>
+
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                    </p:confirmDialog>
+                    
+                </h:form>
+
+
+
+                
+                               
+                <p:dialog id="dlgEditProveedor" header="Proveedor Detalles" showEffect="fade" modal="true"
+                          widgetVar="dialogModificarProveedor" responsive="true" >
+                    <h:form id="formEditarProveedor">
+                        <p:panelGrid columns="3" styleClass="ui-noborder" >
+
+                            <p:outputLabel value ="Raz. Social" style="font-weight:bold; font-size:16px" />
+                            <p:inputText value ="#{proveedorC.proveedor.RASOPROV}" required="true" id="razSoc">
+                                <f:validateLength minimum="2" maximum="50"/>
+                                <p:keyFilter regEx="/[ABCDEFGHIJKLMNÑOPQRSTUVWXYZ]/i"/> 
+                                <p:ajax update="msgRAZ" event="keyup" delay="800"/>
+                                <p:tooltip for="razSoc" value="Ingrese razon.Social" trackMouse="focus"/>
+                            </p:inputText>
+                            <p:message id="msgRAZ" for="razSoc"/>
+
+                            <p:outputLabel value ="RUC" style="font-weight:bold; font-size:16px" />
+                            <p:inputText value="#{proveedorC.proveedor.RUCPROV}" required="true" id="ruc" maxlength="11">
+                                <f:validateLength minimum="" maximum="11"/>
+                                <p:keyFilter regEx="/[0-9]/i"/> 
+                                <f:validator validatorId="rucV"/>
+                                <f:attribute name="ids" value="#{proveedorC.proveedor.IDPROV}" />
+                                <p:ajax update="msgRUC" event="keyup" delay="800"/>
+                                <p:tooltip for="ruc" value="Ingrese RUC" trackMouse="focus"/>
+                            </p:inputText>
+                            <p:message id="msgRUC" for="ruc"/>
+
+                            <p:outputLabel value ="celular" style="font-weight:bold; font-size:16px" />
+                            <p:inputText value ="#{proveedorC.proveedor.CELPROV}" required="true" id="celular" maxlength="9">
+                                <f:validateLength minimum="" maximum="9"/>
+                                <p:keyFilter regEx="/[0-9]/i"/> 
+                                <f:validator validatorId="celularV"/>
+                                <f:attribute name="telefono" value="#{proveedorC.proveedor.CELPROV}" />
+                                <p:ajax update="msgTELCLI" event="keyup" delay="800"/>
+                                <p:tooltip for="celular" value="Ingrese el TELEFONO" trackMouse="focus"/>
+                            </p:inputText>
+                            <p:message id="msgTELCLI" for="celular"/>
+
+                            <p:outputLabel value ="correo" style="font-weight:bold; font-size:16px" />
+                            <p:inputText id="EMAPROV" value="#{proveedorC.proveedor.CORPROV}" maxlength="50">
+                                <f:validator validatorId="emailV"/>
+                                <f:attribute name="ids" value="#{proveedorC.proveedor.IDPROV}" />
+                                <f:attribute name="tipo" value="PROVEEDOR" />
+                                <p:ajax update="msgEMAPROV" event="keyup" delay="800"/>
+                                <p:tooltip for="EMAPROV" value="Ingrese el Correo" trackMouse="focus"/>
+                            </p:inputText>
+                            <p:message id="msgEMAPROV" for="EMAPROV"/> 
+
+                            <p:commandButton icon="pi pi-check"
+                                             actionListener="#{proveedorC.modificarProveedor()}"
+                                             update=":formMostrarProveedor:tablaProveedor" 
+                                             id="btnModificar"  value="Modificar"
+                                             oncomplete="if(!args.validationFailed)PF('dialogModificarProveedor').hide()"/>
+                            <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('dialogModificarProveedor').hide()"
+                                             class="ui-button-secondary"/>
+
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+                
+                
+                
+
+                <p:dialog id="dlgNuevoProveedor" header="Nuevo Proveedor" showEffect="fade" modal="true"
+                          widgetVar="dialogNuevoProveedor" responsive="true" >
+                    <h:form id="formNuevoProveedor">
+                        <p:panelGrid columns="3" styleClass="ui-noborder" >
+
+                            <p:outputLabel value ="Raz. Social" style="font-weight:bold; font-size:16px" />
+                            <p:inputText value ="#{proveedorC.proveedor.RASOPROV}" required="true" id="razSoc">
+                                <f:validateLength minimum="2" maximum="50"/>
+                                <p:keyFilter regEx="/[ABCDEFGHIJKLMNÑOPQRSTUVWXYZ]/i"/> 
+                                <p:ajax update="msgRAZ" event="keyup" delay="800"/>
+                                <p:tooltip for="razSoc" value="Ingrese razon.Social" trackMouse="focus"/>
+                            </p:inputText>
+                            <p:message id="msgRAZ" for="razSoc"/>
+
+                            <p:outputLabel value ="RUC" style="font-weight:bold; font-size:16px" />
+                            <p:inputText value="#{proveedorC.proveedor.RUCPROV}" required="true" id="ruc" maxlength="11">
+                                <f:validateLength minimum="" maximum="11"/>
+                                <p:keyFilter regEx="/[0-9]/i"/> 
+                                <f:validator validatorId="rucV"/>
+                                <f:attribute name="ids" value="#{proveedorC.proveedor.IDPROV}" />
+                                <p:ajax update="msgRUC" event="keyup" delay="800"/>
+                                <p:tooltip for="ruc" value="Ingrese RUC" trackMouse="focus"/>
+                            </p:inputText>
+                            <p:message id="msgRUC" for="ruc"/>
+
+                            <p:outputLabel value ="celular" style="font-weight:bold; font-size:16px" />
+                            <p:inputText value ="#{proveedorC.proveedor.CELPROV}" required="true" id="celular" maxlength="9">
+                                <f:validateLength minimum="" maximum="9"/>
+                                <p:keyFilter regEx="/[0-9]/i"/> 
+                                <f:validator validatorId="celularV"/>
+                                <f:attribute name="telefono" value="#{proveedorC.proveedor.CELPROV}" />
+                                <p:ajax update="msgTELCLI" event="keyup" delay="800"/>
+                                <p:tooltip for="celular" value="Ingrese el TELEFONO" trackMouse="focus"/>
+                            </p:inputText>
+                            <p:message id="msgTELCLI" for="celular"/>
+
+                            <p:outputLabel value ="correo" style="font-weight:bold; font-size:16px" />
+                            <p:inputText id="EMAPROV" value="#{proveedorC.proveedor.CORPROV}" maxlength="50">
+                                <f:validator validatorId="emailV"/>
+                                <f:attribute name="ids" value="#{proveedorC.proveedor.IDPROV}" />
+                                <f:attribute name="tipo" value="PROVEEDOR" />
+                                <p:ajax update="msgEMAPROV" event="keyup" delay="800"/>
+                                <p:tooltip for="EMAPROV" value="Ingrese el Correo" trackMouse="focus"/>
+                            </p:inputText>
+                            <p:message id="msgEMAPROV" for="EMAPROV"/> 
+
+                            <p:commandButton icon="pi pi-check"
+                                             actionListener="#{proveedorC.nuevoProveedor()}"
+                                             update=":formMostrarProveedor:tablaProveedor" 
+                                             id="btnModificar"  value="Agregar"
+                                             oncomplete="if(!args.validationFailed)PF('dialogNuevoProveedor').hide()"/>
+                            <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('dialogNuevoProveedor').hide()"
+                                             class="ui-button-secondary"/>
+
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+                
+               
+
+                
+                <p:confirmDialog widgetVar="deleteProvDialog" showEffect="fade" width="300"
+                                 message="Delete the product?" header="Confirm" severity="warn">
+                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{proveedorC.eliminarProveedor()}"
+                                     process="@this" oncomplete="PF('deleteProvDialog').hide()" 
+                                     update=":formMostrarProveedor:tablaProveedor"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteProvDialog').hide()" 
+                                     update=":formMostrarProveedor:tablaProveedor"/>
+                </p:confirmDialog>
+                
+
+                
+                
+                
+            </ui:define>
+        </ui:composition>
+
+    </h:body>
+</html>

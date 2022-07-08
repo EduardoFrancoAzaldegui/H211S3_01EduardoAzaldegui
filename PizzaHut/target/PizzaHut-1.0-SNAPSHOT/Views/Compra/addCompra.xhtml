@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:body>
+
+
+
+        <ui:composition template="./../../templates/plantilla.xhtml">
+            <ui:define name="content">
+
+
+                <center>
+                    <h:form style="background-color:#ffffff">
+                        <p:panelGrid  style="border:none;margin-top:3% " styleClass="companyHeaderGrid">
+                            <p:row>
+
+                                <p:column>
+                                    <p:outputLabel for="@next" value="Proveedor" style='padding-right:20px'/>
+                                    <p:selectOneMenu id="proveedor" value="#{carritoCompraC.proveedorSelect}" style="width:15rem">
+                                        <f:selectItem itemLabel="Selecciona un Proveedor" itemValue="#{null}" noSelectionOption="true"/>
+                                        <f:selectItems value="#{carritoCompraC.listProveedor}"/>
+                                        <f:ajax execute="proveedor" render="#{carritoCompraC.proveedorSelect}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+
+
+                                <p:column>
+                                    <p:outputLabel for="@next" value="Producto" style='padding-right:20px'/>
+                                    <p:selectOneMenu id="producto" value="#{carritoCompraC.productoSelect}" style="width:15rem">
+                                        <f:selectItem itemLabel="Selecciona un producto" itemValue="#{null}" noSelectionOption="true"/>
+                                        <f:selectItems value="#{carritoCompraC.listProductos}"/>
+                                        <f:ajax execute="producto" render="#{carritoCompraC.productoSelect}"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+
+
+                            <p:row>                             
+                                <p:column>
+                                    <div class="p-field p-col-12 p-md-4">
+                                        <p:outputLabel for="@next" value="Cantidad " style='padding-right:20px'/>
+                                        <p:spinner id="rotate" value="#{carritoCompraC.cantidadSelect}" min="1"  rotate="true"/>
+                                    </div> 
+                                </p:column>
+
+
+                                <p:column>
+                                    <p:outputLabel for="calendar" value="Fech de Entrega " style='padding-right:20px'/>
+                                    <p:calendar id="calendar"  value="#{carritoCompraC.fechaSelect}"  style="width:15rem" ></p:calendar>
+                                </p:column>
+                            </p:row>
+
+
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton  value="+ Agregar Articulo" styleClass="ui-button-info"
+                                                      actionListener="#{carritoCompraC.agregarItem()}"
+                                                      update=":formMostrarCarrito:tablaCarrito" />
+                                </p:column>
+
+                                <p:column>
+                                    
+                                </p:column>
+
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </center>
+
+
+                <h:form id="formMostrarCarrito" style="border:none;margin-top:3%;margin-bottom:4% ;margin-left:2%;margin-right: 2%" >
+                    <p:growl id="messages" showDetail="false" rendered="false"/>
+
+                    <p:dataTable id="tablaCarrito" widgetVar="dtCarrito" var="carrito" value="#{carritoCompraC.listaCompra}"
+                                 reflow="true" styleClass="products-table"  
+                                 paginator="true" 
+                                 rows="5" rowSelectMode="add" paginatorPosition="bottom"
+                                 emptyMessage="No hay datos de los Items">
+
+                        <f:facet name="header">
+                            <div class="products-table-header">
+                                <span style="font-weight: bold">Productos</span>
+
+                                <span class="filter-container ui-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <p:inputText id="globalFilter" onkeyup="PF('dtCarrito').filter()" placeholder="Buscar..."/>
+                                </span>
+                            </div>
+                        </f:facet>
+
+                        <p:column headerText="Codigo" sortBy="#{carrito.IDCAR}" >
+                            <h:outputText value="#{carrito.IDCAR}"/>
+                        </p:column>
+                        <p:column headerText="Proveedor" sortBy="#{carrito.RASOPROV}">
+                            <h:outputText value="#{carrito.RASOPROV}"/>
+                        </p:column>
+                        <p:column headerText="Producto" sortBy="#{carrito.NOMPRO}">
+                            <h:outputText value="#{carrito.NOMPRO}"/>
+                        </p:column>
+                        <p:column headerText="Precio" sortBy="#{carrito.PRECPRO}">
+                            <h:outputText value="#{carrito.PRECPRO}"/>
+                        </p:column>
+                        <p:column headerText="Cantidad" sortBy="#{carrito.CANTFACT}">
+                            <h:outputText value="#{carrito.CANTFACT}"/>
+                        </p:column>
+                        <p:column headerText="Subtotal" sortBy="#{carrito.SUBTOTAL}">
+                            <h:outputText value="#{carrito.SUBTOTAL}"/>
+                        </p:column>
+
+                        <f:facet name="footer" >
+                            <span class="p-text-bold" style="padding-right:10px;float:right;margin-top: 10px" >Total : #{carritoCompraC.TOTAL}</span>
+
+                            <p:commandButton  value="Comprar" styleClass="ui-button-success" 
+                                              actionListener="#{carritoCompraC.comprarItems()}"
+                                              style="margin-right:20px"
+                                              update=":formMostrarCarrito:tablaCarrito" />
+
+                            <p:commandButton  value="Cancelar" styleClass="ui-button-danger" 
+                                              actionListener="#{carritoCompraC.eliminarItems()}"
+                                              update=":formMostrarCarrito:tablaCarrito" />
+                        </f:facet>
+
+                    </p:dataTable>               
+                </h:form>
+
+
+
+
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

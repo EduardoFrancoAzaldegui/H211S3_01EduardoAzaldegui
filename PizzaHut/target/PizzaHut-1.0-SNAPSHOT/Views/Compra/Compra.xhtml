@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <h:body>
+
+        <ui:composition template="./../../templates/plantilla.xhtml">
+
+            <ui:define name="content">
+
+
+
+                <h:form id="formMostrarCompra" style="border:none;margin-top:3%;margin-bottom:4% ;margin-left:2%;margin-right: 2%" >
+                    <p:growl id="messages" showDetail="false" rendered="false"/>
+
+                    <p:dataTable id="tablaCompra" widgetVar="dtCompra" var="compraDet" value="#{compraC.listaCompra}"
+                                 reflow="true" styleClass="products-table"  
+                                 paginator="true" 
+                                 rows="15" rowSelectMode="add" paginatorPosition="bottom"
+                                 emptyMessage="No hay Factura generada">
+
+                        <f:facet name="header">
+                            <div class="products-table-header">
+                                <span style="font-weight: bold">Facturas</span>
+
+                                <span class="filter-container ui-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <p:inputText id="globalFilter" onkeyup="PF('dtCompra').filter()" placeholder="Buscar..."/>
+                                </span>
+                            </div>
+                        </f:facet>
+
+
+                        <p:column headerText="Codigo" sortBy="#{compraDet.NROFACT}" >
+                            <h:outputText value="#{compraDet.NROFACT}"/>
+                        </p:column>
+                        <p:column headerText="Fech. Compra" sortBy="#{compraDet.FECOMDET}">
+                            <h:outputText value="#{compraDet.FECOMDET}"/>
+                        </p:column>
+                        <p:column headerText="Empleado" sortBy="#{compraDet.NOMEMP}">
+                            <h:outputText value="#{compraDet.NOMEMP}"/>
+                        </p:column>
+                        <p:column headerText="Total" sortBy="#{compraDet.TOTAL}">
+                            <h:outputText value="#{compraDet.TOTAL}"/>
+                        </p:column>
+                        <p:column exportable="false">
+                            <p:commandButton icon="pi pi-eye" 
+                                             oncomplete="PF('detalleFactura').show()" update=":formDetallesProductos"
+                                             styleClass="rounded-button ui-button-info">
+                                <f:setPropertyActionListener value="#{compraDet}" target="#{compraC.compraDet}"/>
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+                </h:form>
+
+
+                <h:form id="formDetallesProductos">
+                    <p:dialog header="Detalle de la Factura" widgetVar="detalleFactura" closable="true" 
+                              resizable="false" appendTo="@(body)" modal="true" width="800">
+
+                        <p:dataTable emptyMessage="No hay productos agregados" style="width: 700px;"
+                                     var="compraDet" value="#{compraC.listaDetalles}"
+                                     reflow="true" styleClass="products-table"  
+                                     paginator="true" 
+                                     rows="15" rowSelectMode="add" paginatorPosition="bottom"
+                                     >
+                            
+                            <p:column headerText="NroFactura" sortBy="#{compraDet.NROFACT}" >
+                                <h:outputText value="#{compraDet.NROFACT}"/>
+                            </p:column>
+                            <p:column headerText="Fech. Entrega" sortBy="#{compraDet.FECENTR}">
+                                <h:outputText value="#{compraDet.FECENTR}"/>
+                            </p:column>
+                            <p:column headerText="Producto" sortBy="#{compraDet.NOMPRO}">
+                                <h:outputText value="#{compraDet.NOMPRO}"/>
+                            </p:column>
+                            <p:column headerText="Precio" sortBy="#{compraDet.PRECPRO}">
+                                <h:outputText value="#{compraDet.PRECPRO}"/>
+                            </p:column>
+                            <p:column headerText="Cantidad" sortBy="#{compraDet.CANTFACT}">
+                                <h:outputText value="#{compraDet.CANTFACT}"/>
+                            </p:column>
+                            <p:column headerText="SubtTotal" sortBy="#{compraDet.SUBTOTAL}">
+                                <h:outputText value="#{compraDet.SUBTOTAL}"/>
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:dialog>
+                </h:form>
+
+            </ui:define>
+        </ui:composition>
+
+    </h:body>
+</html>
+

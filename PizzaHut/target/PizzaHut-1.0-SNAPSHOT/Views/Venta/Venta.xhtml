@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <h:body>
+
+        <ui:composition template="./../../templates/plantilla.xhtml">
+
+            <ui:define name="content">
+                
+                <ui:param name="lista" value="#{productoC.listarAll()}" />
+                
+                
+                <p:row>
+                    <p:column >
+                        <div class="card">
+                            <h5 style="margin-top:0">Basic</h5>
+                            <p:panelGrid columns="2">
+                                <f:facet name="header">
+                                    <p:graphicImage name="image/1.jpg" style="height:100px; width: 200px " />
+                                </f:facet>
+
+                                <h:outputText value="Nombre:"/>
+                                <h:outputText value="#{lista[1].getNOMPRO()}"/>
+
+                                <h:outputText value="Precio:"/>
+                                <h:outputText value="#{lista[1].getPREPRO()}"/>
+
+                                <h:outputText value="Stock:"/>
+                                <h:outputText value="#{lista[1].getCANPRO()}"/>
+
+                            </p:panelGrid>
+                        </div>
+
+                    </p:column>
+                    
+                    
+
+
+                    <p:column rowspan="2" style="font-weight: bold;">Seattle</p:column>
+                    <p:column rowspan="2" style="font-weight: bold;">4</p:column>
+
+                    <p:column rowspan="5">Seattle</p:column>
+                    <p:column rowspan="5">2</p:column>
+
+                    <p:column rowspan="11" style="font-weight: bold;">Chicago</p:column>
+                </p:row>
+                
+                
+
+                <p:row>
+                    <p:column style="font-weight: bold;">
+                        <div class="card">
+                            <h5 style="margin-top:0">Basic</h5>
+                            <p:panelGrid columns="2">
+                                <f:facet name="header">
+                                    <p:graphicImage name="image/2.jpg" style="height:100px; width: 200px " />
+                                </f:facet>
+
+                                <h:outputText value="Nombre:"/>
+                                <h:outputText value="#{lista[2].getNOMPRO()}"/>
+
+                                <h:outputText value="Precio:"/>
+                                <h:outputText value="#{lista[2].getPREPRO()}"/>
+
+                                <h:outputText value="Stock:"/>
+                                <h:outputText value="#{lista[2].getCANPRO()}"/>
+
+                            </p:panelGrid>
+                        </div>
+                    </p:column>
+                </p:row>
+
+
+                
+                
+
+                
+                
+                
+                
+                <div class="card">
+                    <h5 style="margin-top:0">Basic</h5>
+                    <p:panelGrid columns="2">
+                        <f:facet name="header">
+                            <p:graphicImage name="image/3.jpg" style="height:100px; width: 200px " />
+                        </f:facet>
+
+                        <h:outputText value="Nombre:"/>
+                        <h:outputText value="#{lista[3].getNOMPRO()}"/>
+
+                        <h:outputText value="Precio:"/>
+                        <h:outputText value="#{lista[3].getPREPRO()}"/>
+
+                        <h:outputText value="Stock:"/>
+                        <h:outputText value="#{lista[3].getCANPRO()}"/>
+
+                    </p:panelGrid>
+                </div>
+                
+                
+                
+                
+                <div class="card">
+                    <h5 style="margin-top:0">Basic</h5>
+                    <p:panelGrid columns="2">
+                        <f:facet name="header">
+                            <p:graphicImage name="image/4.jpg" style="height:100px; width: 200px " />
+                        </f:facet>
+
+                        <h:outputText value="Nombre:"/>
+                        <h:outputText value="#{lista[4].getNOMPRO()}"/>
+
+                        <h:outputText value="Precio:"/>
+                        <h:outputText value="#{lista[4].getPREPRO()}"/>
+
+                        <h:outputText value="Stock:"/>
+                        <h:outputText value="#{lista[4].getCANPRO()}"/>
+
+                    </p:panelGrid>
+                </div>
+                
+
+            </ui:define>
+        </ui:composition>
+
+    </h:body>
+</html>
+

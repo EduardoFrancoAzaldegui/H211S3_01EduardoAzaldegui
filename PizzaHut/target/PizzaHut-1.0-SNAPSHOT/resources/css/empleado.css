@@ -1,0 +1,17 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 30 jun. 2022, 1:37:01
+    Author     : Azaldegui
+*/
+
+.ui-selectonemenu.estado{
+}
+
+
+tr.ui-state-highlight {
+    background-color: lightcoral !important;
+} 
