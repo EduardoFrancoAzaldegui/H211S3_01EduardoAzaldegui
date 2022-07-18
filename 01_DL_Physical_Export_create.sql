@@ -1,11 +1,15 @@
+ï»¿-- Created by Vertabelo (http://vertabelo.com)
+-- Last modification date: 2022-07-18 16:40:30.183
+
+-- tables
+
 
 CREATE DATABASE PizzaHut;
 GO
 
 USE PizzaHut;
-GO
 
--- tables
+
 -- Table: CARGO
 CREATE TABLE CARGO (
     IDCAR int  NOT NULL IDENTITY,
@@ -31,17 +35,17 @@ CREATE TABLE EMPLEADO (
     NOMEMP varchar(20)  NOT NULL,
     CELEMP char(9)  NOT NULL,
     COREMP varchar(30)  NOT NULL,
-    ESTEMP char(1)  NOT NULL DEFAULT 'A',
     IDCAR int  NOT NULL,
+    ESTEMP char(1)  NOT NULL DEFAULT 'A',
     CONSTRAINT EMPLEADO_pk PRIMARY KEY  (IDEMP)
 );
 
 -- Table: EQUIPO
 CREATE TABLE EQUIPO (
     IDEQUI int  NOT NULL IDENTITY,
-    ESTQUI char(1)  NOT NULL DEFAULT 'A',
     IDEMP int  NOT NULL,
     IDSUC int  NOT NULL,
+    ESTQUI char(1)  NOT NULL DEFAULT 'A',
     CONSTRAINT EQUIPO_pk PRIMARY KEY  (IDEQUI)
 );
 
@@ -58,8 +62,8 @@ CREATE TABLE PRODUCTO (
 -- Table: SUCURSAL
 CREATE TABLE SUCURSAL (
     IDSUC int  NOT NULL IDENTITY,
+    IDEMP int  NOT NULL,
     ESTSUC char(1)  NOT NULL DEFAULT 'A',
-    IDEMP int  NOT NULL , 
     CONSTRAINT SUCURSAL_pk PRIMARY KEY  (IDSUC)
 );
 
@@ -69,7 +73,7 @@ CREATE TABLE VENTA (
     FECVENT datetime  NOT NULL,
     TIPVENT int  NOT NULL,
     IDCLI int  NOT NULL,
-    IDEMP int  NOT NULL,
+    IDSUC int  NOT NULL,
     CONSTRAINT VENTA_pk PRIMARY KEY  (IDVEN)
 );
 
@@ -81,6 +85,14 @@ CREATE TABLE VENTA_DETALLE (
     IDPRO int  NOT NULL,
     IDVEN int  NOT NULL,
     CONSTRAINT VENTA_DETALLE_pk PRIMARY KEY  (IDVENDET)
+);
+
+-- Table: VENTA_EMPLEADO
+CREATE TABLE VENTA_EMPLEADO (
+    IDVEEM int  NOT NULL IDENTITY,
+    IDEMP int  NOT NULL,
+    IDVEN int  NOT NULL,
+    CONSTRAINT VENTA_EMPLEADO_pk PRIMARY KEY  (IDVEEM)
 );
 
 -- foreign keys
@@ -119,10 +131,20 @@ ALTER TABLE VENTA_DETALLE ADD CONSTRAINT VENTA_DETALLE_VENTA
     FOREIGN KEY (IDVEN)
     REFERENCES VENTA (IDVEN);
 
--- Reference: VENTA_EMPLEADO (table: VENTA)
-ALTER TABLE VENTA ADD CONSTRAINT VENTA_EMPLEADO
+-- Reference: VENTA_EMPLEADO_EMPLEADO (table: VENTA_EMPLEADO)
+ALTER TABLE VENTA_EMPLEADO ADD CONSTRAINT VENTA_EMPLEADO_EMPLEADO
     FOREIGN KEY (IDEMP)
     REFERENCES EMPLEADO (IDEMP);
+
+-- Reference: VENTA_EMPLEADO_VENTA (table: VENTA_EMPLEADO)
+ALTER TABLE VENTA_EMPLEADO ADD CONSTRAINT VENTA_EMPLEADO_VENTA
+    FOREIGN KEY (IDVEN)
+    REFERENCES VENTA (IDVEN);
+
+-- Reference: VENTA_SUCURSAL (table: VENTA)
+ALTER TABLE VENTA ADD CONSTRAINT VENTA_SUCURSAL
+    FOREIGN KEY (IDSUC)
+    REFERENCES SUCURSAL (IDSUC);
 
 -- sequences
 -- Sequence: CARGO_seq
@@ -197,12 +219,16 @@ CREATE SEQUENCE VENTA_seq
     NO CYCLE
     NO CACHE;
 
+-- End of file.
+
+
+
 
 
 ------ INSERCION DE DATOS -----------
 
 
-/* Insertar registros tabla CARGO */INSERT INTO CARGO (NOMCAR) VALUES('Jefe de Sucursal'),('Administrador'),('Vendedor'),('Despachador')SELECT * FROM CARGO;
+/* Insertar registros tabla CARGO */INSERT INTO CARGO (NOMCAR) VALUES('Jefe de Sucursal'),('Administrador'),('Vendedor'),('Despachador')SELECT * FROM CARGO
 
 
 
@@ -216,71 +242,6 @@ CREATE SEQUENCE VENTA_seq
 ('Estrella',  '978456932', 'EstrellaA@gmail.com',1),
 ('Alberto', '941203256', 'Alberto@gmail.com',3),
 ('Jesus', '974120358', 'JesusC@gmail.com',4),
-('Carlos', '989520365', 'Carlos@gmail.com',4)SELECT * FROM EMPLEADO/* Insertar registros tabla PRODUCTO */INSERT INTO PRODUCTO(NOMPRO,CANPRO,PREPRO)VALUES('Pizza margarita',50,16.00),('Pizza cuatro quesos',70,15.00),('Pizza de pepperoni',50,28.00),('Pizza cuatro estaciones',100,12.00),('Pizza con champiñones',60,50.00),('Pizza hawaiana',45,70.00),('Pizza marinara',9,90.00),('Pizza napolitana',5,80.00),('Pizza neoyorquina',20,76.00),('Pizza fugazza',10,98.00)SELECT * FROM PRODUCTO/* Insertar registros tabla SUCURSAL */INSERT INTO SUCURSAL(IDEMP)VALUES(1),(1),(7),(1),(7),(1),(7),(7),(1),(1),(7),(1)SELECT * FROM SUCURSAL;/* Insertar registros tabla EQUIPO */INSERT INTO EQUIPO(IDEMP,IDSUC)VALUES(3,1),(8,1),(8,2),(5,1),(8,3),(3,4),(5,9),(3,9),(8,2),(5,3),(5,4),(1,7)SELECT * FROM EQUIPO;GO
-
------------    TRANSACCIONALES  ----------------
+('Carlos', '989520365', 'Carlos@gmail.com',4)SELECT * FROM EMPLEADO/* Insertar registros tabla PRODUCTO */INSERT INTO PRODUCTO(NOMPRO,CANPRO,PREPRO)VALUES('Pizza margarita',50,16.00),('Pizza cuatro quesos',70,15.00),('Pizza de pepperoni',50,28.00),('Pizza cuatro estaciones',100,12.00),('Pizza con champiï¿½ones',60,50.00),('Pizza hawaiana',45,70.00),('Pizza marinara',9,90.00),('Pizza napolitana',5,80.00),('Pizza neoyorquina',20,76.00),('Pizza fugazza',10,98.00)SELECT * FROM PRODUCTO/* Insertar registros tabla SUCURSAL */INSERT INTO SUCURSAL(IDEMP)VALUES(1),(1),(7),(1),(7),(1),(7),(7),(1),(1),(7),(1)SELECT * FROM SUCURSAL/* Insertar registros tabla EQUIPO */INSERT INTO EQUIPO(IDEMP,IDSUC)VALUES(3,1),(8,1),(8,2),(5,1),(8,3),(3,4),(5,9),(3,9),(8,2),(5,3),(5,4),(1,7)SELECT * FROM EQUIPOGO/*Insertar Transaccional */INSERT INTO VENTA  (FECVENT,TIPVENT,IDCLI,IDSUC)VALUES('01-15-2022',1,1,1),('02-20-2022',1,2,2)INSERT INTO VENTA_DETALLE   (CANTVEDET,SUBVEDET,IDPRO,IDVEN)VALUES (4,60,1,1), (1,15,2,1), (2,56,3,2), (2,32,1,2)INSERT INTO VENTA_EMPLEADO       (IDEMP,IDVEN)VALUES(3,1),(9,1),(5,2),(10,2)/*CREATE VIEW VENTASVISTA AS   SELECT 'CLIENTE'=CL.NOMCLI,EM.NOMEMP,PD.NOMPRO,      'CANTIDAD'=VDT.CANTVEDET, 'SUBTOTAL' = VDT.SUBVEDET   FROM VENTA AS V   INNER JOIN VENTA_DETALLE AS VDT   ON VDT.IDVEN=V.IDVEN   INNER JOIN VENTA_EMPLEADO AS VEEM   ON VEEM.IDVEN=V.IDVEN   INNER JOIN PRODUCTO AS PD   ON PD.IDPRO=VDT.IDPRO   INNER JOIN CLIENTE AS CL   ON CL.IDCLI=V.IDCLI   INNER JOIN EMPLEADO AS EM   ON EM.IDEMP=VEEM.IDEMP
 
-
-
-
-CREATE PROCEDURE spUpdateVenta
-      (
-	      --Venta variables
-		  @IDCLI int,
-		  @IDEMP int,
-		  @TIPVENT int,
-		  @FECVEN datetime,
-
-		  -- Producto variables
-		  @IDPRO int,
-
-		   -- Venta Detalle variables
-		   @CANBOLDET int
-      )
-AS
-   BEGIN 
-	      SET NOCOUNT ON
-		  BEGIN TRAN /* TRANSACCIONES */
-	      BEGIN TRY
-
-		       --Obteniendo la fecha de hoy
-			   DECLARE @FECBOLDET date;
-			   SELECT  @FECBOLDET=CAST( GETDATE() AS Date ) ;
-
-		  	   --calculando la nueva cantidad
-		       DECLARE @CANTACTUAL int,
-		       @NEWCANT int;
-			   SELECT @CANTACTUAL=CANPRO FROM PRODUCTO WHERE IDPRO=@IDPRO ;
-			   SET @NEWCANT= @CANTACTUAL-@CANBOLDET;
-
-			   --calculando el subtotal
-			   DECLARE @TOTBOL decimal(10,2),
-			   @PRECUNIT decimal(10,2);
-			   SELECT @PRECUNIT=PREPRO FROM PRODUCTO WHERE IDPRO=@IDPRO;
-			   SET @TOTBOL=(@PRECUNIT*@CANBOLDET)
-
-			   --obteniendo el nuevo id de Venta
-			   INSERT INTO VENTA VALUES(@FECVEN,@TIPVENT,@IDCLI,@IDEMP);
-
-
-			   --obteniedo el id de la venta
-			   DECLARE @IDVEN int;
-			   SELECT @IDVEN=MAX(IDVEN) FROM VENTA;
-
-
-			   --Insertando datos y actualizando el producto
-			   INSERT INTO VENTA_DETALLE VALUES(@FECBOLDET,@CANBOLDET,@TOTBOL,@IDPRO,@IDVEN)
-
-			   COMMIT TRAN
-           END TRY
-
-		   BEGIN CATCH
-		         SELECT 'Fallo la transaccion de venta' AS ERROR
-			    IF @@TRANCOUNT > 0 ROLLBACK TRAN;
-		   END CATCH
-	   END
-GO
-
-
-
-
+GOSELECT * FROM VENTASVISTA*/
