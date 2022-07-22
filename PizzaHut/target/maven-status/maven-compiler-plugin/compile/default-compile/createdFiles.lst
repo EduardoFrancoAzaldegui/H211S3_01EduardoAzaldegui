@@ -1,0 +1,16 @@
+dao\daoEmpleado.class
+modelo\Venta.class
+controlador\ClienteC.class
+service\Reporte.class
+modelo\Empleado.class
+dao\daoClientes.class
+dao\daoVenta.class
+dao\Conexion.class
+dao\ICRUD.class
+modelo\Cliente.class
+modelo\Producto.class
+controlador\CarritoVentaC.class
+validator\CelularV.class
+dao\daoProducto.class
+validator\EmailV.class
+controlador\VentaC.class

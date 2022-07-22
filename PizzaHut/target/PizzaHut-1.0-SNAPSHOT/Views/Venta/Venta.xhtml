@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <h:body>
+
+        <ui:composition template="./../../templates/plantilla.xhtml">
+
+            <ui:define name="content">
+
+
+
+                <h:form id="formMostrarCompra" style="border:none;margin-top:3%;margin-bottom:4% ;margin-left:2%;margin-right: 2%" >
+                    <p:growl id="messages" showDetail="false" rendered="false"/>
+
+                    <p:dataTable id="tablaVenta" widgetVar="dtCompra" var="venta" value="#{ventaC.listaVenta}"
+                                 reflow="true" styleClass="products-table"  
+                                 paginator="true" 
+                                 rows="15" rowSelectMode="add" paginatorPosition="bottom"
+                                 emptyMessage="No hay Factura generada">
+
+                        <f:facet name="header">
+                            <div class="products-table-header">
+                                <span style="font-weight: bold">Facturas</span>
+
+                                <span class="filter-container ui-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <p:inputText id="globalFilter" onkeyup="PF('dtCompra').filter()" placeholder="Buscar..."/>
+                                </span>
+                            </div>
+                        </f:facet>
+
+                        <p:column headerText="Fech. Compra" sortBy="#{venta.FECVENT}">
+                            <h:outputText value="#{venta.FECVENT}"/>
+                        </p:column>
+                        <p:column headerText="Cliente" filterBy="#{venta.NOMCLI}">
+                            <h:outputText value="#{venta.NOMCLI}"/>
+                        </p:column>
+                        <p:column headerText="Vendedor" filterBy="#{venta.VENDEDOR}">
+                            <h:outputText value="#{venta.VENDEDOR}"/>
+                        </p:column>
+                        <p:column headerText="Total" sortBy="#{venta.TOTAL}">
+                            <h:outputText value="#{venta.TOTAL}"/>
+                        </p:column>
+                        <p:column exportable="false">
+                            <p:commandButton icon="pi pi-eye" 
+                                             oncomplete="PF('detalleFactura').show()" update=":formDetallesProductos"
+                                             styleClass="rounded-button ui-button-info">
+                                <f:setPropertyActionListener value="#{venta}" target="#{ventaC.venta}"/>
+                            </p:commandButton>
+
+                            <p:commandButton value="Reporte" styleClass="" ajax="false"
+                                             style="float:right; background-color: #90CAF9" actionListener="#{ventaC.reporteVenta(venta)}"
+                                             onclick="this.form.target = '_blank'" title="Ticket de Venta "
+                                             icon="pi pi-download">
+                                <f:setPropertyActionListener value="#{venta}" target="#{ventaC.venta}"/>
+                            </p:commandButton>
+                              
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+
+                <h:form id="formDetallesProductos">
+                    <p:dialog header="Detalle de la Factura" widgetVar="detalleFactura" closable="true" 
+                              resizable="false" appendTo="@(body)" modal="true" width="800">
+
+                        <p:dataTable emptyMessage="No hay productos agregados" style="width: 700px;"
+                                     var="ventas" value="#{ventaC.listaDetalles}"
+                                     reflow="true" styleClass="products-table"  
+                                     paginator="true" 
+                                     rows="15" rowSelectMode="add" paginatorPosition="bottom"
+                                     >
+                            
+                            <p:column headerText="Cliente" sortBy="#{ventas.NOMCLI}">
+                                <h:outputText value="#{ventas.NOMCLI}"/>
+                            </p:column>
+                            <p:column headerText="Producto" sortBy="#{ventas.NOMPRO}">
+                                <h:outputText value="#{ventas.NOMPRO}"/>
+                            </p:column>
+                            <p:column headerText="Precio" sortBy="#{ventas.PREPRO}">
+                                <h:outputText value="#{ventas.PREPRO}"/>
+                            </p:column>
+                            <p:column headerText="Cantidad" sortBy="#{ventas.CANTVEDET}">
+                                <h:outputText value="#{ventas.CANTVEDET}"/>
+                            </p:column>
+                            <p:column headerText="SubtTotal" sortBy="#{ventas.SUBTOTAL}">
+                                <h:outputText value="#{ventas.SUBTOTAL}"/>
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:dialog>
+                </h:form>
+
+            </ui:define>
+        </ui:composition>
+
+    </h:body>
+</html>
+
